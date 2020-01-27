@@ -54,7 +54,79 @@ var bye = new Array(12,34,23,11);
 //mutate array data
 console.log(names);
 console.log(names.length);
+//previous index will be assigned empty
 names[6]="wao";
 console.log(names);
 names[names.length]="john";
 console.log(names);
+
+//different data types
+var tup = ["shariq",2000,false];
+console.log(tup);
+//push is used to add value on last index..
+//unshift is used to add value in 0 index mean 1st
+tup.push("hello");
+tup.unshift(1);
+console.log(tup);
+
+//pop is used to remove last value
+//shift is used to remove 1st index value
+
+tup.pop();
+console.log(tup);
+tup.shift();
+console.log(tup);
+
+// indexof return the index of value
+console.log(tup.indexOf(false));
+//if the value is not present in array it returns -1 index lets see 
+//following example
+var isDesigner = tup.indexOf("DEsigner") === -1 ? "John is not designer"
+:"john is designer";
+console.log(isDesigner);
+
+//coding challgenge for array/functiontip calculator
+
+function tipcal(bill){
+    var tip;
+    if(bill<50){
+        tip=0.20;
+    }
+    else if(bill>=50 && bill<=200){
+        tip=0.15;
+    }
+    else{
+        tip = 0.10;
+    }
+    return bill*tip;
+}
+var bills = [200,25,300];
+console.log("Bills are : "+bills);
+var Tips = [tipcal(bills[0]),tipcal(bills[1]),tipcal(bills[2])];
+console.log(" Tips are : "+ Tips);
+var totalAmountWithTip = [bills[0]+=Tips[0],bills[1]+=Tips[1],bills[2]+=Tips[2]];
+console.log("Total amount with tips : "+totalAmountWithTip);
+
+//object and properties like struct
+//initialize objects
+var bio = {
+    firstname : "shariq",
+    birthyear : 2000,
+    isMarried : false,
+    grades : ["A","B","C"]
+};
+//ways to print object
+console.log(bio);
+console.log(bio.firstname);
+console.log(bio["birthyear"]);
+var x = "grades";
+console.log(bio[x]);
+
+//new object syntax
+var bioa = new Object();
+bioa.firstname = "harry";
+bioa["birthyear"] = 1212;
+bioa.isMarried= false;
+console.log(bioa);
+
+//end in 2:56
