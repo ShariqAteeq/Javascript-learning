@@ -168,4 +168,4 @@ for(var i = 0; i<s.length;i++){
     }else{
         console.log("both pays same tips");
     }
-   
+    
