@@ -75,7 +75,7 @@ function nextplayer(){
 
 document.querySelector(".btn-new").addEventListener("click", init);
 function init(){
-
+    gamePlaying = true;
     scores = [0,0]; //both player starting global scores
 roundScore = 0; // individual score for each player
 activePlayer = 0; //1st player is 0 and 2nd player is 1
