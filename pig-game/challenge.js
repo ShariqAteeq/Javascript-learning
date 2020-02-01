@@ -1,37 +1,41 @@
-var activePlayer,scores,roundScore,diceDOM,gamePlaying=true;
+var activePlayer,scores,roundScore,diceDOM,diceDOM1,gamePlaying=true;
 
 init();
 
-var previosDice;
+
 //roll dice
 document.querySelector(".dice").style.display = "none";
+document.querySelector("#dice-2").style.display = "none";
 document.querySelector(".btn-roll").addEventListener("click",function(){
-    var dice = Math.floor(Math.random()*6)+1;
     
-
+    
     if(gamePlaying){
-        console.log(previosDice);
-    
+    var dice = Math.floor(Math.random()*6)+1;
+    var dice1 = Math.floor(Math.random()*6)+1;
     
     console.log(dice);
+    console.log(dice1);
+    //1st dice
      diceDOM = document.querySelector(".dice");
     diceDOM.style.display = "block";
     diceDOM.src = "dice-"+dice+".png";
-    
-    if(dice ===6 && previosDice ===6){
-        scores[activePlayer] = 0;
-        document.querySelector("#score-"+activePlayer).textContent = scores[activePlayer];
-    }
-    if(dice!=1){
+
+    //second dice
+    diceDOM1 = document.querySelector("#dice-2");
+    diceDOM1.style.display = "block";
+    diceDOM1.src = "dice-"+dice1+".png";
+
+    if(dice!=1 && dice1 != 1){
         roundScore += dice;
+        roundScore += dice1;
         document.querySelector("#current-"+activePlayer).textContent = roundScore;
+        
     }
     else{
         diceDOM.style.display = "none";
+        diceDOM1.style.display = "none";
             nextplayer();
     }
-    previosDice = dice;
-    
 }
 });
 
@@ -43,12 +47,11 @@ document.querySelector(".btn-hold").addEventListener("click",function(){
         scores[activePlayer] += roundScore;
         document.querySelector("#score-"+activePlayer).textContent = scores[activePlayer];
 
-            
             //value is used to take input value from text field
-            var input = document.querySelector(".final-score").value;
+            var input = document.querySelector(".final-score").Value;
             var winningScore;
             //check if there is value or not
-            if(input){
+            if(input>20){
                 winningScore = input;
             }
             else{
@@ -60,6 +63,7 @@ document.querySelector(".btn-hold").addEventListener("click",function(){
             document.querySelector(".player-"+activePlayer+"-panel").classList.add("winner");
             document.querySelector(".player-"+activePlayer+"-panel").classList.remove("active");
             diceDOM.style.display="none";
+            diceDOM1.style.display="none";
             gamePlaying=false;
         }
             else{
