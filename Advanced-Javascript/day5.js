@@ -23,6 +23,7 @@ var mark = new Person("jane",2002,"driver");
 john.calage();
 mark.calage();
 
+console.log(john);
 console.log(john.lastname);
 console.log(mark.lastname);
 
