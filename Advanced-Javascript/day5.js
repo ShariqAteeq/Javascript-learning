@@ -58,3 +58,8 @@ var m = Object.create(personpro,
     );
 console.log(j);
 console.log(m);
+
+/*
+
+
+    */
