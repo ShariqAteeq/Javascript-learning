@@ -180,13 +180,26 @@ allQuestions[randomNo].CheckAnswer(ans);
             console.log("Wrong Answer");
             sc = sco(false);
         }
-    
+            this.displayScore(sc);
     }
-    Question.prototype.displayScore = function(score){
+    Question.prototype.displayScore = function(scor){
 
-        return
-        
+        console.log("Your Current Score is : "+scor);
+
     }
+
+    function score(){
+            var sc = 0;
+            return function(correct)
+            {
+                if(correct){
+                sc++;
+                }
+                return sc;
+            }
+
+    }
+    var keepscore = score();
     function nextQuestion(){
 
     var allQuestions = [question1,question2,question3];
