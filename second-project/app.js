@@ -7,21 +7,63 @@
 //1st model
 //BUDGET CONTROLLER
 var budgetController = (function(){
+        //create function constructor for all expensex and incomes b/c there are
+        //lot of incomes and expenses means lots of objects thats why we make constructor
+    var Expenxe = function(id,description,value){
 
-        /*
-    var x= 23;
-    //closure is created thats why add function can access x
-   var add =  function(a){
-        return x+a;
+            this.id = id;
+            this.description = description;
+            this.value=value;
+
+    };
+    var Income = function(id,description,value){
+
+        this.id = id;
+        this.description = description;
+        this.value=value;
+
+    };
+    //all incomes and expenses data
+    var data = {
+
+        allItem:{
+            inc:[],
+            exp:[]
+        },
+        totals:{
+            inc:0,
+            exp:0
+        }
+
     };
     return{
-        //here u can access x or add function b/c closure is created
-        PublicTest :function(b){
-            return add(b);
-        }
-    };
-    */
 
+        addItem : function(type,des,val){
+            var ID, newItem;
+            //ID is assigned to every Income and exprenses object so later we can remove that from id
+            //create new id
+            if(data.allItem[type].length > 0){
+            ID = data.allItem[type][data.allItem[type].length-1].id+1;
+            }else{
+                ID = 0;
+            }
+            //create new item based on inc or exp
+            if(type==="exp"){
+                newItem = new Expenxe(ID,des,val);
+            } else if(type==="inc"){
+                newItem = new Income(ID,des,val);
+            }
+
+            //push into data sctructure
+            data.allItem[type].push(newItem);
+            return newItem;
+        },
+        //since data is not accessible so we pass it into return
+        testingData : function(){
+            console.log(data);
+        }
+
+    };
 
 })();
 
@@ -57,49 +99,50 @@ var UIController = (function(){
 //APP CONTROLLER
 var Controller = (function(budgetctrl,UIctrl){
 
-    /*
-        var z = budgetctrl.PublicTest(5);
+    var SetupEventListener = function(){
 
-        //for printing z
-        return{
-            PrintZ:function(){
-                console.log(z);
+            var DOM = UIctrl.returnDOM();
+
+            //this event is occured when user click yes button
+            document.querySelector(DOM.inputBtn).addEventListener("click",ctrlAddItem);
+
+            //this event occur when press enter key
+            document.addEventListener("keypress",function(event){
+
+            //enter keycode is 13
+            //which method used in older browser
+            if(event.keyCode===13 || event.which===13){
+                ctrlAddItem();
             }
-        };
+        });
+    }
 
-        */
-        var DOM = UIctrl.returnDOM();
+     var ctrlAddItem = function(){
+        
+            var input , newItem;
+             //1. get the field input data
 
-        var ctrlAddItem = function(){
-
-                
-            //1. get the field input data
-
-                var input = UIctrl.getinput();
-                console.log(input);
-
+            input = UIctrl.getinput();
+           
             //2. put into budget controller
+
+            newItem = budgetctrl.addItem(input.type,input.description,input.value);
+
             //3. put into UI controller
             //4. calculate budget
-            //5. update budget
-
-            console.log("it works");
+            //5. update budget    
 
         }
-
-        //this event is occured when user click yes button
-    document.querySelector(DOM.inputBtn).addEventListener("click",ctrlAddItem);
-
-        //this event occur when press enter key
-    document.addEventListener("keypress",function(event){
-
-        //enter keycode is 13
-        //which method used in older browser
-        if(event.keyCode===13 || event.which===13){
-            ctrlAddItem();
+        //for accessing eventlistener function we have to pass in return b/c its IIFI
+        return{
+            init:function(){
+                console.log("Application started")
+                SetupEventListener();
+            }
         }
-
-    });
-
+       
 
 })(budgetController,UIController); //it takes arguement
+//call thi init function
+
+Controller.init();
