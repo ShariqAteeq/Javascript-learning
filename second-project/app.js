@@ -23,6 +23,20 @@ var budgetController = (function(){
         this.value=value;
 
     };
+
+    calculateTotal = function(type){
+
+        var sum = 0;
+        data.allItem[type].forEach(function(cur){
+            
+            sum += cur.value; 
+
+        });
+
+        data.totals[type] = sum;
+
+    };
+
     //all incomes and expenses data
     var data = {
 
@@ -33,7 +47,9 @@ var budgetController = (function(){
         totals:{
             inc:0,
             exp:0
-        }
+        },
+        budget:0,
+        percentage: -1
 
     };
     return{
@@ -58,6 +74,36 @@ var budgetController = (function(){
             data.allItem[type].push(newItem);
             return newItem;
         },
+
+        calculateBudget : function(){
+
+            //calculate all income and expenses
+            calculateTotal("inc");
+            calculateTotal("exp");
+
+            //calculate budget
+            data.budget = data.totals.inc-data.totals.exp;
+
+            //calculate percentage
+            if(data.totals.inc > 0){
+            data.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
+            } else{
+                data.percentage = -1;
+            }
+
+        },
+
+        getBudget : function(){
+
+            return{
+                budget:data.budget,
+                totInc:data.totals.inc,
+                totExp:data.totals.exp,
+                Per:data.percentage
+            };
+
+        },
+
         //since data is not accessible so we pass it into return
         testingData : function(){
             console.log(data);
@@ -77,7 +123,11 @@ var UIController = (function(){
         inputValue : ".add__value",
         inputBtn : ".add__btn",
         incomeContainer : ".income__list",
-        expensesContainer : ".expenses__list"
+        expensesContainer : ".expenses__list",
+        budgetLabel : ".budget__value",
+        incomeLabel : ".budget__income--value",
+        expenseLabel : ".budget__expenses--value",
+        perLabel : ".budget__expenses--percentage"
     };
 
     return{
@@ -85,7 +135,8 @@ var UIController = (function(){
             return{
              type: document.querySelector(DOMStrings.inputType).value,
              description: document.querySelector(DOMStrings.inputDes).value,
-             value:document.querySelector(DOMStrings.inputValue).value
+             //to covert value from string to float pr int use parsefloat
+             value: parseFloat(document.querySelector(DOMStrings.inputValue).value)
     };
     
     },
@@ -120,6 +171,38 @@ var UIController = (function(){
 
         },
 
+        clearFields : function(){
+            var fields, fieldArr;
+
+            //to select all fields which will be clear
+            //it returns a list 
+            fields = document.querySelectorAll(DOMStrings.inputDes+ ", "+DOMStrings.inputValue);
+            
+            //convert list to an array
+            //slice is used to convert list to arrat
+            fieldArr = Array.prototype.slice.call(fields);
+            
+            //for each metod will select all itms of array
+            fieldArr.forEach(function(current , index , fieldArr) {
+                current.value = "";
+            });
+            fieldArr[0].focus();
+        },
+
+        displayBudget : function(obj){
+
+            document.querySelector(DOMStrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMStrings.incomeLabel).textContent = obj.totInc;
+            document.querySelector(DOMStrings.expenseLabel).textContent = obj.totExp;
+
+            if(obj.budget > 0) {
+            document.querySelector(DOMStrings.perLabel).textContent = obj.Per+"%";
+            } else{
+                document.querySelector(DOMStrings.perLabel).textContent = "--";
+            }
+
+        },
+
     //if we want to public our DOM Strings to other model we have to pass in return
         returnDOM : function(){
             return DOMStrings;
@@ -148,32 +231,63 @@ var Controller = (function(budgetctrl,UIctrl){
                 ctrlAddItem();
             }
         });
+    };
+
+    var updateBudget = function(){
+        
+        //1. calculate budget
+        budgetctrl.calculateBudget();
+
+        //2. return budget
+        var budget = budgetctrl.getBudget();
+
+        //3. display budget
+        UIctrl.displayBudget(budget);
+        
+
     }
 
-     var ctrlAddItem = function(){
+    var ctrlAddItem = function(){
         
             var input , newItem;
              
             //1. get the field input data
 
             input = UIctrl.getinput();
-           
-            //2. put into budget controller
 
-            newItem = budgetctrl.addItem(input.type,input.description,input.value);
+            //now it will not add income or expenses if there will be no value
 
-            //3. put into UI controller
+            if(input.description !== "" && !isNaN(input.value) && input.value > 0 ){
 
-            UIctrl.addListItem(newItem,input.type);
+                //2. put into budget controller
 
-            //4. calculate budget
-            //5. update budget    
+                newItem = budgetctrl.addItem(input.type,input.description,input.value);
+
+                //3. put into UI controller
+    
+                UIctrl.addListItem(newItem,input.type);
+    
+                //4. clear all fields
+    
+                UIctrl.clearFields();
+    
+                //5. calculate and update budget
+    
+                updateBudget();
+
+            }      
 
         }
         //for accessing eventlistener function we have to pass in return b/c its IIFI
         return{
             init:function(){
-                console.log("Application started")
+                console.log("Application started");
+                UIctrl.displayBudget({
+                    budget:0,
+                    totInc:0,
+                    totExp:0,
+                    Per:0
+                });
                 SetupEventListener();
             }
         }
