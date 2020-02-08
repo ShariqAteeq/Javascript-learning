@@ -127,7 +127,8 @@ var UIController = (function(){
         budgetLabel : ".budget__value",
         incomeLabel : ".budget__income--value",
         expenseLabel : ".budget__expenses--value",
-        perLabel : ".budget__expenses--percentage"
+        perLabel : ".budget__expenses--percentage",
+        container: ".container"
     };
 
     return{
@@ -151,12 +152,12 @@ var UIController = (function(){
             if(type==="inc"){
                 element = DOMStrings.incomeContainer;
 
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+                html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
             } else if(type==="exp"){
                 element = DOMStrings.expensesContainer;
                 
-                html = '<div class="item clearfix" id="expense-%id%Z">  <div class="item__description">%description%</div><div class="right clearfix"> <div class="item__value">%value%</div> <div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div> </div></div>'
+                html = '<div class="item clearfix" id="exp-%id%Z">  <div class="item__description">%description%</div><div class="right clearfix"> <div class="item__value">%value%</div> <div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div> </div></div>'
 
             }
             //replace the placeolder text with actual data
@@ -230,6 +231,10 @@ var Controller = (function(budgetctrl,UIctrl){
             if(event.keyCode===13 || event.which===13){
                 ctrlAddItem();
             }
+
+            //event for delete items from income or expense list
+            document.querySelector(DOM.container).addEventListener("click",ctrlDeleteItem);
+
         });
     };
 
@@ -245,7 +250,7 @@ var Controller = (function(budgetctrl,UIctrl){
         UIctrl.displayBudget(budget);
         
 
-    }
+    };
 
     var ctrlAddItem = function(){
         
@@ -277,7 +282,26 @@ var Controller = (function(budgetctrl,UIctrl){
 
             }      
 
-        }
+        };
+
+        var ctrlDeleteItem = function(event){
+
+            var ItemID , splitId , type , ID;
+
+            ItemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            splitId = ItemID.split("-");
+            console.log(splitId);
+            type = splitId[0];
+            ID = splitId[1];
+
+            //1. delete the item from data structure
+
+            //2. delete the item from UI
+
+            //3. update and show the budget
+
+        };
+
         //for accessing eventlistener function we have to pass in return b/c its IIFI
         return{
             init:function(){
