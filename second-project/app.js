@@ -14,8 +14,24 @@ var budgetController = (function(){
             this.id = id;
             this.description = description;
             this.value=value;
+            this.percentage = -1;
 
     };
+
+    Expenxe.prototype.calpercentage = function(totalIncome){
+
+        if(totalIncome > 0){
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        }else{
+            this.percentage = -1;
+        }
+
+    };
+
+    Expenxe.prototype.getPercent = function(){
+        return this.percentage;
+    };
+
     var Income = function(id,description,value){
 
         this.id = id;
@@ -113,6 +129,25 @@ var budgetController = (function(){
 
         },
 
+        //calculate percentage
+        calculatePercentage : function(){
+
+            data.allItem.exp.forEach(function(cur){
+                cur.calpercentage(data.totals.inc);
+
+            });
+
+
+        },
+
+        getPercentage : function(){
+
+            var allPer = data.allItem.exp.map(function(cur){
+                return cur.getPercent();
+            });
+            return allPer;
+        },
+
         getBudget : function(){
 
             return{
@@ -148,7 +183,8 @@ var UIController = (function(){
         incomeLabel : ".budget__income--value",
         expenseLabel : ".budget__expenses--value",
         perLabel : ".budget__expenses--percentage",
-        container: ".container"
+        container: ".container",
+        expensesPerLabel : ".item__percentage"
     };
 
     return{
@@ -232,6 +268,28 @@ var UIController = (function(){
 
         },
 
+        //display percentages
+        displayPercentage : function(percentages){
+
+            var fields = document.querySelectorAll(DOMStrings.expensesPerLabel);
+
+            var nodeListforEach = function(list, callBack){
+
+                for(var i = 0 ; i < list.length ; i++){
+                    callBack(list[i], i);
+                }
+
+            };
+            nodeListforEach(fields,function(current,index){
+                if(percentages[index] > 0){
+                    current.textContent = percentages[index] + "%";
+                }else{
+                    current.textContent = percentages = -1;
+                }
+            });
+
+        },
+
     //if we want to public our DOM Strings to other model we have to pass in return
         returnDOM : function(){
             return DOMStrings;
@@ -308,6 +366,10 @@ var Controller = (function(budgetctrl,UIctrl){
     
                 updateBudget();
 
+                //6 calculate and update percentage
+
+                updateper();
+
             }      
 
         };
@@ -332,6 +394,23 @@ var Controller = (function(budgetctrl,UIctrl){
             //3. update and show the budget
 
             updateBudget();
+
+            //4 calculate and update percentage
+
+            updateper();
+
+        };
+
+        var updateper = function(){
+
+            //calculate percentage
+            budgetctrl.calculatePercentage();
+
+            //get percentage
+           var percentages = budgetctrl.getPercentage();
+
+            //show per on UI
+            UIctrl.displayPercentage(percentages);
 
         };
 
